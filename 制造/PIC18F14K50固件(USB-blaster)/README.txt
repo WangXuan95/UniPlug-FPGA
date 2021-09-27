@@ -1,15 +1,15 @@
-﻿注： PIC8F14K50 USB-blaster 方案来源：http://sa89a.net/mp.cgi/ele/ub.htm?tdsourcetag=s_pctim_aiomsg
+﻿注： PIC18F14K50 USB-blaster 方案来源：http://sa89a.net/mp.cgi/ele/ub.htm?tdsourcetag=s_pctim_aiomsg
 
 
 
 1. 下载并安装 MPLAB v8.91 ：
 https://www.microchip.com/en-us/development-tools-tools-and-software/mplab-ecosystem-downloads-archive
 
-2. 需要准备一个 PIC8 单片机烧写器： 我用的是 PICkit 3
+2. 需要准备一个 PIC 单片机烧写器： 我用的是 PICkit 3
 
-3. 解压本文件夹下的 USB-Blaster7.zip，用 MPLAB 打开该工程，并烧写到 PIC8F14K50。
+3. 解压本文件夹下的 USB-Blaster7.zip，用 MPLAB 打开该工程，并烧写到 PIC18F14K50。
 
-4. 完成后，重新给 PIC8F14K50 上电，连接其 USB ，若成功，则能在电脑上看见 USB-blaster 设备
+4. 完成后，重新给 PIC18F14K50 上电，连接其 USB ，若成功，则能在电脑上看见 USB-blaster 设备
 
 
 
