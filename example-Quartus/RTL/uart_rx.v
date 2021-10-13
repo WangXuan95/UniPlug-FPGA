@@ -1,3 +1,5 @@
+`timescale 1ns/1ns
+
 module uart_rx #(
     parameter CLK_DIV = 108  // UART baud rate = clk freq/(4*CLK_DIV)
                              // modify CLK_DIV to change the UART baud

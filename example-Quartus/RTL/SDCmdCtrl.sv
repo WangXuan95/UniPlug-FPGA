@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module SDCmdCtrl #(
     parameter logic[14:0] TIMEOUT_CYCLES = 999

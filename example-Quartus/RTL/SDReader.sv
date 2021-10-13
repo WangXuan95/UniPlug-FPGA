@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module SDReader # (
     parameter  CLK_DIV = 1, // when clk = 0~25MHz   , set CLK_DIV to 0,

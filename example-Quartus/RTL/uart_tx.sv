@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module uart_tx #(
     parameter  UART_CLK_DIV = 434,  // UART baud rate = clk freq/(2*UART_TX_CLK_DIV)

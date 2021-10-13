@@ -4,6 +4,8 @@
 //                FileSystem : FAT16 and FAT32
 //
 
+`timescale 1ns/1ns
+
 module SDFileReader #(
     parameter FILE_NAME = "example.txt",   // file to read, ignore Upper and Lower Case
                                            // For example, if you want to read a file named HeLLo123.txt in the SD card,

@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 
 module SDDirParser(
     input  logic clk, rst_n,
