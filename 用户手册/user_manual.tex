@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{ctex}
+\usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{ulem}
@@ -26,12 +27,12 @@
 
 
 \title{\Huge \boardname 核心板 \\ 用户手册 \\
-\vspace{1.0cm}
+\vspace{0.3cm}
     \begin{figure}[ht]
         \centering
         \includegraphics[width=.8\textwidth]{board.png}
     \end{figure}
-\vspace{0.5cm}
+\vspace{0.3cm}
 }
 
 \date{\LARGE 2021年9月}
@@ -60,6 +61,8 @@
   \end{itemize}
   \item 三组扩展IO：IOA，IOB，和IOC，共 62 个普通 IO。
 \end{itemize}
+
+\textbf{\color{red} 注意：烧写前需要把 IOB 和 IOC 的电源输入用跳线帽连接到任意电源上，否则 FPGA 将无法成功上传程序。详见下文“扩展IO说明”}
 
 \begin{figure}[ht]
   \centering
@@ -178,30 +181,30 @@
   外设                                     & 信号名称  & 其它功能   & FPGA 引脚号 & 电平                  & \makecell{类型\\(对于FPGA)}  \\
   \hline
   \multirow{24}{*}{\makecell{IOB \\ （扩展接口 B）}}
-                                           & IOB0      & LVDS-p     & PIN\_38     & \multirow{24}{*}{\makecell{用跳线调整\\1.8V/2.5V/3.3V}} & 双向    \\
-                                           & IOB1      & LVDS-n     & PIN\_39     &                       & 双向    \\
-                                           & IOB2      &            & PIN\_42     &                       & 双向    \\
-                                           & IOB3      &            & PIN\_46     &                       & 双向    \\
-                                           & IOB4      &            & PIN\_43     &                       & 双向    \\
-                                           & IOB5      &            & PIN\_44     &                       & 双向    \\
-                                           & IOB6      & LVDS-p     & PIN\_49     &                       & 双向    \\
-                                           & IOB7      & LVDS-n     & PIN\_50     &                       & 双向    \\
-                                           & IOB8      &            & PIN\_51     &                       & 双向    \\
-                                           & IOB9      &            & PIN\_58     &                       & 双向    \\
-                                           & IOB10     & LVDS-p     & PIN\_52     &                       & 双向    \\
-                                           & IOB11     & LVDS-n     & PIN\_53     &                       & 双向    \\
-                                           & IOB12     & LVDS-p     & PIN\_54     &                       & 双向    \\
-                                           & IOB13     & LVDS-n     & PIN\_55     &                       & 双向    \\
-                                           & IOB14     & LVDS-p     & PIN\_59     &                       & 双向    \\
-                                           & IOB15     & LVDS-n     & PIN\_60     &                       & 双向    \\
-                                           & IOB16     &            & PIN\_64     &                       & 双向    \\
-                                           & IOB17     &            & PIN\_65     &                       & 双向    \\
-                                           & IOB18     &            & PIN\_66     &                       & 双向    \\
-                                           & IOB19     &            & PIN\_67     &                       & 双向    \\
-                                           & IOB20     &            & PIN\_68     &                       & 双向    \\
-                                           & IOB21     &            & PIN\_69     &                       & 双向    \\
-                                           & IOB22     & LVDS-p     & PIN\_70     &                       & 双向    \\
-                                           & IOB23     & LVDS-n     & PIN\_71     &                       & 双向    \\
+                                           & IOB0      & LVDS-n     & PIN\_39     & \multirow{24}{*}{\makecell{用跳线调整\\1.8V/2.5V/3.3V}} & 双向    \\
+                                           & IOB1      & LVDS-p     & PIN\_38     &                       & 双向    \\
+                                           & IOB2      &            & PIN\_46     &                       & 双向    \\
+                                           & IOB3      &            & PIN\_42     &                       & 双向    \\
+                                           & IOB4      &            & PIN\_44     &                       & 双向    \\
+                                           & IOB5      &            & PIN\_43     &                       & 双向    \\
+                                           & IOB6      & LVDS-n     & PIN\_50     &                       & 双向    \\
+                                           & IOB7      & LVDS-p     & PIN\_49     &                       & 双向    \\
+                                           & IOB8      &            & PIN\_58     &                       & 双向    \\
+                                           & IOB9      &            & PIN\_51     &                       & 双向    \\
+                                           & IOB10     & LVDS-n     & PIN\_53     &                       & 双向    \\
+                                           & IOB11     & LVDS-p     & PIN\_52     &                       & 双向    \\
+                                           & IOB12     & LVDS-n     & PIN\_55     &                       & 双向    \\
+                                           & IOB13     & LVDS-p     & PIN\_54     &                       & 双向    \\
+                                           & IOB14     & LVDS-n     & PIN\_60     &                       & 双向    \\
+                                           & IOB15     & LVDS-p     & PIN\_59     &                       & 双向    \\
+                                           & IOB16     &            & PIN\_65     &                       & 双向    \\
+                                           & IOB17     &            & PIN\_64     &                       & 双向    \\
+                                           & IOB18     &            & PIN\_67     &                       & 双向    \\
+                                           & IOB19     &            & PIN\_66     &                       & 双向    \\
+                                           & IOB20     &            & PIN\_69     &                       & 双向    \\
+                                           & IOB21     &            & PIN\_68     &                       & 双向    \\
+                                           & IOB22     & LVDS-n     & PIN\_71     &                       & 双向    \\
+                                           & IOB23     & LVDS-p     & PIN\_70     &                       & 双向    \\
   \hline
   \multirow{24}{*}{\makecell{IOC \\ （扩展接口 C）}}
                                            & IOC0      & LVDS-p     & PIN\_144    & \multirow{24}{*}{\makecell{用跳线调整\\1.8V/2.5V/3.3V}} & 双向    \\
@@ -301,30 +304,30 @@ set_location_assignment PIN_80 -to IOA[10]
 set_location_assignment PIN_77 -to IOA[11]
 set_location_assignment PIN_76 -to IOA[12]
 set_location_assignment PIN_73 -to IOA[13]
-set_location_assignment PIN_38 -to IOB[0]
-set_location_assignment PIN_39 -to IOB[1]
-set_location_assignment PIN_42 -to IOB[2]
-set_location_assignment PIN_46 -to IOB[3]
-set_location_assignment PIN_43 -to IOB[4]
-set_location_assignment PIN_44 -to IOB[5]
-set_location_assignment PIN_49 -to IOB[6]
-set_location_assignment PIN_50 -to IOB[7]
-set_location_assignment PIN_51 -to IOB[8]
-set_location_assignment PIN_58 -to IOB[9]
-set_location_assignment PIN_52 -to IOB[10]
-set_location_assignment PIN_53 -to IOB[11]
-set_location_assignment PIN_54 -to IOB[12]
-set_location_assignment PIN_55 -to IOB[13]
-set_location_assignment PIN_59 -to IOB[14]
-set_location_assignment PIN_60 -to IOB[15]
-set_location_assignment PIN_64 -to IOB[16]
-set_location_assignment PIN_65 -to IOB[17]
-set_location_assignment PIN_66 -to IOB[18]
-set_location_assignment PIN_67 -to IOB[19]
-set_location_assignment PIN_68 -to IOB[20]
-set_location_assignment PIN_69 -to IOB[21]
-set_location_assignment PIN_70 -to IOB[22]
-set_location_assignment PIN_71 -to IOB[23]
+set_location_assignment PIN_39 -to IOB[0]
+set_location_assignment PIN_38 -to IOB[1]
+set_location_assignment PIN_46 -to IOB[2]
+set_location_assignment PIN_42 -to IOB[3]
+set_location_assignment PIN_44 -to IOB[4]
+set_location_assignment PIN_43 -to IOB[5]
+set_location_assignment PIN_50 -to IOB[6]
+set_location_assignment PIN_49 -to IOB[7]
+set_location_assignment PIN_58 -to IOB[8]
+set_location_assignment PIN_51 -to IOB[9]
+set_location_assignment PIN_53 -to IOB[10]
+set_location_assignment PIN_52 -to IOB[11]
+set_location_assignment PIN_55 -to IOB[12]
+set_location_assignment PIN_54 -to IOB[13]
+set_location_assignment PIN_60 -to IOB[14]
+set_location_assignment PIN_59 -to IOB[15]
+set_location_assignment PIN_65 -to IOB[16]
+set_location_assignment PIN_64 -to IOB[17]
+set_location_assignment PIN_67 -to IOB[18]
+set_location_assignment PIN_66 -to IOB[19]
+set_location_assignment PIN_69 -to IOB[20]
+set_location_assignment PIN_68 -to IOB[21]
+set_location_assignment PIN_71 -to IOB[22]
+set_location_assignment PIN_70 -to IOB[23]
 set_location_assignment PIN_144 -to IOC[0]
 set_location_assignment PIN_143 -to IOC[1]
 set_location_assignment PIN_142 -to IOC[2]
@@ -350,6 +353,71 @@ set_location_assignment PIN_112 -to IOC[21]
 set_location_assignment PIN_111 -to IOC[22]
 set_location_assignment PIN_110 -to IOC[23]
 \end{verbatim} }
+
+
+
+\section{程序固化到EPCS}
+
+这节我们介绍如何把程序固化到 EPCS4 闪存芯片，这样就能永久保留 FPGA 程序。
+因为 \boardname 的烧写电路只支持 JTAG 方式，不支持 AS 方式。所以只能用jlc文件来烧录 EPCS4 芯片。
+
+我们首先需要将sof文件转换为jic文件，如图\ref{gen_jic}。
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.98\textwidth]{gen_jic.png}
+  \caption{转换sof文件到jic 文件的步骤} \label{gen_jic}
+\end{figure}
+
+第一步：打开一个项目，确保\textbf{[项目目录]/output\_files}文件夹下已经有一个编译好的sof文件（若没有则需要编译工程）。
+在工具栏中打开File-\(>\)Convert Programming Files，弹出一个窗口。
+
+第二步：指定文件类型、文件名和flash芯片类型。
+选择Programming file type 为.jic；
+Configuration device为EPCS4 （EPCS4是USTC-EDU-FPGA上的flash型号）；
+最后指定File name为“output\_files/[项目名称].jic”。
+实际上jic文件名可以随便起，但笔者建议它与项目同名，并应该存放在项目目录下的output\_files文件夹下，与sof文件存放在一起。
+
+第三步：选择FPGA型号。点击下方Flash Loader，再点击右边Add Device，
+在弹出的框里的左侧选择Cyclone IV E，再在右侧选择EP4CE6（EP4CE6是USTC-EDU-FPGA上的FPGA型号），
+然后点OK，完成FPGA型号选择
+
+第四步：选择待转换的sof文件。点击下方的SOF Data，再点击右边的Add File，
+在弹出的框里选择之前编译生成的sof文件（一般sof存放路径是\textbf{[项目目录]/output\_files/[项目名称].sof}）。
+选择好sof后点击Open，最后点击Generate，看到成功提示后，点Close关闭窗口。
+然后可以在\textbf{[项目目录]/output\_files/}中找到jic文件。
+
+
+
+
+
+有了jic文件，我们可以向EPCS 中烧录它，如图\ref{epcswrite}。
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.98\textwidth]{epcswrite.png}
+  \caption{烧录jic文件的步骤} \label{epcswrite}
+\end{figure}
+
+第一步：首先连接开发板到电脑，在Quartus软件上方点击Program\includegraphics{program.png}，
+在打开的烧录选项里，正确地选择USB-Blaster。
+
+第二步：删除之前的sof烧录选项（如果有的话），点选sof文件并点击delete。
+
+第三步：添加jic文件。与添加sof的方法一样，点击Add File...，选择之前生成的.jic 文件，点击Open。
+
+第四步：烧录。在右侧勾选上Program/Configure，然后点击Start，右上角进度条开始运行。
+烧录jic大概需要15秒时间（比烧录sof慢得多）。完成后会有成功提示，
+此时你必须\textbf{重新插拔开发板}，它才会运行烧录的jic程序。
+
+
+
+EPCS(jic)的烧录步骤远远比烧录RAM(sof)要繁琐，
+每次改动并编译程序后，烧录sof只需点一下鼠标并等待3秒的时间就能完成；
+而烧录jic需要重新生成jic文件，然后等待15秒才能完成。
+因此通常在调试程序、频繁改动程序时时烧录RAM，最终程序完成时才根据需要烧录jic。
+
+
 
 
 \end{document}
