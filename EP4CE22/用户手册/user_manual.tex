@@ -1,0 +1,399 @@
+\documentclass{article}
+
+\usepackage{ctex}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{ulem}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage[left=1.8cm,right=1.8cm,top=1.8cm,bottom=1.8cm]{geometry}
+
+\graphicspath{{./images/}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\cfoot{\thepage}
+
+\renewcommand\footrulewidth{0.6pt}
+\renewcommand\figurename{图}
+\renewcommand\tablename{表}
+\renewcommand\contentsname{目录}
+\renewcommand\refname{参考文献}
+
+\def\boardname{UniPlug-FPGA}
+
+
+\title{\Huge \boardname 核心板（EP4CE22版本） \\ 用户手册 \\
+\vspace{0.3cm}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=.8\textwidth]{board.png}
+    \end{figure}
+\vspace{0.3cm}
+}
+
+\author{https://github.com/WangXuan95}
+\date{\LARGE 2021年9月}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{简介}
+
+\boardname 是一款体积小、低成本、易用、扩展性强的 FPGA 核心板。
+可以用作原型设计，或设计底板，添加DRAM、以太网、USB、ADC/DAC、音频、VGA、摄像头等外设，以完成定制化的功能。
+它的系统框图见图\ref{fig_diagram}。它拥有以下特点：
+
+\begin{itemize}
+  \item FPGA 型号为 Altera Cyclone IV EP4CE22E22，拥有 22kLE 的逻辑资源和 594kbit 的内置存储。
+  \item 集成 USB-Blaster（FPGA下载调试器），不需要额外准备 USB-Blaster 就能使用。
+  \item 集成的外设包括：
+  \begin{itemize}
+    \item USB-UART（CH340E），用于和上位机通信。
+    \item 8MB SPI-flash（W25Q64）用户闪存。
+    \item Micro SD 卡槽。
+    \item CAN PHY 芯片（TJA1050），用于CAN总线通信。
+    \item 3 个用户 LED 灯。
+  \end{itemize}
+  \item 三组扩展IO：IOA，IOB，和IOC，共 43 个普通 IO。
+\end{itemize}
+
+\textbf{\color{red} 注意：烧写前需要把 IOB 和 IOC 的电源输入用跳线帽连接到任意电源上，否则 FPGA 将无法成功上传程序。详见下文“扩展IO说明”}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=.85\textwidth]{diagram.png}
+  \caption{\boardname 核心板系统框图} \label{fig_diagram}
+\end{figure}
+
+\newpage
+
+
+\section{扩展IO说明}
+
+扩展 IO 如图 \ref{fig_io} ，包括 3 个双排2.54mm间距排针：IOA，IOB和IOC。其中：
+\begin{itemize}
+  \item IOA 为固定 3.3V 的 7 个普通 IO。
+  \item IOB 可配置为 18 个普通 IO ，电平可用跳线配置为 1.8V、2.5V 或 3.3V 。
+  \item IOC 可配置为 18 个普通 IO ，电平可用跳线配置为 1.8V、2.5V 或 3.3V 。
+\end{itemize}
+调整 IOB 的电平的方法是用跳线帽将 VIOB 连接到某一个电源电压上：
+\begin{itemize}
+  \item IOB 的 3,4 号引脚用跳线帽短接时，IOB 的电平=1.8V。
+  \item IOB 的 5,6 号引脚用跳线帽短接时，IOB 的电平=2.5V。
+  \item IOB 的 7,8 号引脚用跳线帽短接时，IOB 的电平=3.3V。
+\end{itemize}
+同理，调整 IOC 的电平的方法是用跳线帽将 VIOC 连接到某一个电源电压上：
+\begin{itemize}
+  \item IOC 的 3,4 号引脚用跳线帽短接时，IOC 的电平=1.8V。
+  \item IOC 的 5,6 号引脚用跳线帽短接时，IOC 的电平=2.5V。
+  \item IOC 的 7,8 号引脚用跳线帽短接时，IOC 的电平=3.3V。
+\end{itemize}
+注意：即使不用 IOB 和 IOC，也需要把 VIOB 和 VIOC 用跳线帽连接到任意电平上，VIOB 和 VIOC 不能悬空，否则 FPGA 将无法成功上传程序。
+
+另外，如图 \ref{fig_io}，IOB的 1,2 号引脚的上方还有 2 个引脚，它们是可选的 5V 供电输入。
+可以给它们输入 5V 来给核心板供电。
+核心板有二极管保护，外部供电和 USB 供电不冲突，可以同时存在。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=.98\textwidth]{io.png}
+  \caption{\boardname 核心板扩展 IO 示意图} \label{fig_io}
+\end{figure}
+
+\newpage
+
+\section{引脚分配表}
+
+\begin{table}[!ht]
+\centering
+\caption{FPGA 的引脚分配} \label{tab_pins}
+\begin{tabular}{ccccc}
+  \hline
+  外设                                     & 信号名称     & FPGA 引脚号 & 电平                  & \makecell{类型\\(对于FPGA)}  \\
+  \hline
+  \multirow{4}{*}{\makecell{EPCS16 \\ FPGA 配置芯片 \\ （配置闪存）}}
+                                           & EPCS\_ASDO   & PIN\_6      & \multirow{4}{*}{3.3V} & 输出    \\
+                                           & EPCS\_NCS    & PIN\_8      &                       & 输出    \\
+                                           & EPCS\_DCLK   & PIN\_12     &                       & 输出    \\
+                                           & EPCS\_DATA0  & PIN\_13     &                       & 输入    \\
+  \hline
+  27MHz 时钟                               & CLK27M       & PIN\_24     & 3.3V                  & 输入    \\
+  \hline
+  \multirow{2}{*}{USB 转串口}              & UART\_RX     & PIN\_23     & \multirow{2}{*}{3.3V} & 输入    \\
+                                           & UART\_TX     & PIN\_10     &                       & 输出    \\
+  \hline
+  \multirow{4}{*}{\makecell{W25Q64 \\ SPI-flash \\ （用户闪存）}}
+                                           & FLASH\_CS    & PIN\_87     & \multirow{4}{*}{3.3V} & 输出    \\
+                                           & FLASH\_SCK   & PIN\_105    &                       & 输出    \\
+                                           & FLASH\_MOSI  & PIN\_106    &                       & 输出    \\
+                                           & FLASH\_MISO  & PIN\_89     &                       & 输入    \\
+  \hline
+  \multirow{6}{*}{SD卡槽}                  & SD\_CLK      & PIN\_32     & \multirow{6}{*}{3.3V} & 输出    \\
+                                           & SD\_CMD      & PIN\_31     &                       & 双向    \\
+                                           & SD\_DAT0     & PIN\_33     &                       & 双向    \\
+                                           & SD\_DAT1     & PIN\_80     &                       & 双向    \\
+                                           & SD\_DAT2     & PIN\_28     &                       & 双向    \\
+                                           & SD\_DAT3     & PIN\_30     &                       & 双向    \\
+  \hline
+  \multirow{2}{*}{CAN PHY}                 & CAN\_RX      & PIN\_76     & \multirow{2}{*}{3.3V} & 输入    \\
+                                           & CAN\_TX      & PIN\_77     &                       & 输出    \\
+  \hline
+  \multirow{3}{*}{用户LED灯}               & LED0         & PIN\_100    & \multirow{3}{*}{3.3V} & 输出    \\
+                                           & LED1         & PIN\_7      &                       & 输出    \\
+                                           & LED2         & PIN\_11     &                       & 输出    \\
+  \hline
+  \multirow{8}{*}{\makecell{IOA \\ （扩展接口 A）}}
+                                           & IOA0         & PIN\_104    & \multirow{7}{*}{3.3V} & 双向    \\
+                                           & IOA1         & PIN\_103    &                       & 双向    \\
+                                           & IOA2         & PIN\_98     &                       & 双向    \\
+                                           & IOA3         & PIN\_99     &                       & 双向    \\
+                                           & IOA4         & PIN\_86     &                       & 双向    \\
+                                           & IOA5         & PIN\_83     &                       & 双向    \\
+                                           & IOA6         & PIN\_85     &                       & 双向    \\
+  \hline
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!ht]
+\centering
+\caption{FPGA 的引脚分配（续）} \label{tab_pins2}
+\begin{tabular}{ccccc}
+  \hline
+  外设                                     & 信号名称  & FPGA 引脚号 & 电平                  & \makecell{类型\\(对于FPGA)}  \\
+  \hline
+  \multirow{24}{*}{\makecell{IOB \\ （扩展接口 B）}}
+                                           & IOB0      & PIN\_42     & \multirow{24}{*}{\makecell{用跳线调整\\1.8V/2.5V/3.3V}} & 双向    \\
+                                           & IOB1      & PIN\_39     &                       & 双向    \\
+                                           & IOB2      & PIN\_44     &                       & 双向    \\
+                                           & IOB3      & PIN\_43     &                       & 双向    \\
+                                           & IOB4      & PIN\_49     &                       & 双向    \\
+                                           & IOB5      & PIN\_46     &                       & 双向    \\
+                                           & IOB6      & PIN\_51     &                       & 双向    \\
+                                           & IOB7      & PIN\_50     &                       & 双向    \\
+                                           & IOB8      & PIN\_60     &                       & 双向    \\
+                                           & IOB9      & PIN\_59     &                       & 双向    \\
+                                           & IOB10     & PIN\_65     &                       & 双向    \\
+                                           & IOB11     & PIN\_64     &                       & 双向    \\
+                                           & IOB12     & PIN\_67     &                       & 双向    \\
+                                           & IOB13     & PIN\_66     &                       & 双向    \\
+                                           & IOB14     & PIN\_69     &                       & 双向    \\
+                                           & IOB15     & PIN\_68     &                       & 双向    \\
+                                           & IOB16     & PIN\_72     &                       & 双向    \\
+                                           & IOB17     & PIN\_71     &                       & 双向    \\
+  \hline
+  \multirow{24}{*}{\makecell{IOC \\ （扩展接口 C）}}
+                                           & IOC0      & PIN\_144    & \multirow{24}{*}{\makecell{用跳线调整\\1.8V/2.5V/3.3V}} & 双向    \\
+                                           & IOC1      & PIN\_143    &                       & 双向    \\
+                                           & IOC2      & PIN\_142    &                       & 双向    \\
+                                           & IOC3      & PIN\_141    &                       & 双向    \\
+                                           & IOC4      & PIN\_137    &                       & 双向    \\
+                                           & IOC5      & PIN\_136    &                       & 双向    \\
+                                           & IOC6      & PIN\_133    &                       & 双向    \\
+                                           & IOC7      & PIN\_132    &                       & 双向    \\
+                                           & IOC8      & PIN\_125    &                       & 双向    \\
+                                           & IOC9      & PIN\_121    &                       & 双向    \\
+                                           & IOC10     & PIN\_120    &                       & 双向    \\
+                                           & IOC11     & PIN\_119    &                       & 双向    \\
+                                           & IOC12     & PIN\_115    &                       & 双向    \\
+                                           & IOC13     & PIN\_114    &                       & 双向    \\
+                                           & IOC14     & PIN\_113    &                       & 双向    \\
+                                           & IOC15     & PIN\_112    &                       & 双向    \\
+                                           & IOC16     & PIN\_111    &                       & 双向    \\
+                                           & IOC17     & PIN\_110    &                       & 双向    \\
+  \hline
+\end{tabular}
+\end{table}
+
+~
+
+~
+
+~
+
+~
+
+~
+
+~
+
+~
+
+~
+
+~
+
+~
+
+~
+
+~
+
+
+\section{相关软件与驱动}
+
+\begin{itemize}
+  \item Quartus 标准版或精简版（需要版本号\(>\)11.0）：
+  \begin{itemize}
+    \item \begin{verbatim}https://www.intel.cn/content/www/cn/zh/software/programmable/quartus-prime/download.html\end{verbatim}
+    \item Quartus 安装后会自带 USB-blaster 驱动
+  \end{itemize}
+  \item CH340\&CH341 USB-UART 驱动（用于进行UART通信，可选）：
+  \begin{itemize}
+    \item \begin{verbatim}http://www.wch.cn/downloads/CH341SER_EXE.html\end{verbatim}
+  \end{itemize}
+  \item Putty （用于进行UART通信，可选）：
+  \begin{itemize}
+    \item \begin{verbatim}https://www.chiark.greenend.org.uk/~sgtatham/putty/\end{verbatim}
+  \end{itemize}
+\end{itemize}
+
+
+\newpage
+
+\section{.qsf（Quartus项目配置文件）引脚约束}
+
+{\tiny \begin{verbatim}
+set_location_assignment PIN_24 -to CLK27M
+
+set_location_assignment PIN_100 -to LED[0]
+set_location_assignment PIN_7 -to LED[1]
+set_location_assignment PIN_11 -to LED[2]
+
+set_location_assignment PIN_10 -to UART_TX
+set_location_assignment PIN_23 -to UART_RX
+
+set_location_assignment PIN_6 -to EPCS_ASDO
+set_location_assignment PIN_8 -to EPCS_NCS
+set_location_assignment PIN_12 -to EPCS_DCLK
+set_location_assignment PIN_13 -to EPCS_DATA0
+
+set_location_assignment PIN_87 -to FLASH_CS
+set_location_assignment PIN_105 -to FLASH_SCK
+set_location_assignment PIN_106 -to FLASH_MOSI
+set_location_assignment PIN_89 -to FLASH_MISO
+
+set_location_assignment PIN_28 -to SD_DAT[2]
+set_location_assignment PIN_30 -to SD_DAT[3]
+set_location_assignment PIN_31 -to SD_CMD
+set_location_assignment PIN_32 -to SD_CLK
+set_location_assignment PIN_33 -to SD_DAT[0]
+set_location_assignment PIN_80 -to SD_DAT[1]
+
+set_location_assignment PIN_77 -to CAN_TX
+set_location_assignment PIN_76 -to CAN_RX
+
+set_location_assignment PIN_104 -to IOA[0]
+set_location_assignment PIN_103 -to IOA[1]
+set_location_assignment PIN_98 -to IOA[2]
+set_location_assignment PIN_99 -to IOA[3]
+set_location_assignment PIN_86 -to IOA[4]
+set_location_assignment PIN_83 -to IOA[5]
+set_location_assignment PIN_85 -to IOA[6]
+
+set_location_assignment PIN_42 -to IOB[0]
+set_location_assignment PIN_39 -to IOB[1]
+set_location_assignment PIN_44 -to IOB[2]
+set_location_assignment PIN_43 -to IOB[3]
+set_location_assignment PIN_49 -to IOB[4]
+set_location_assignment PIN_46 -to IOB[5]
+set_location_assignment PIN_51 -to IOB[6]
+set_location_assignment PIN_50 -to IOB[7]
+set_location_assignment PIN_60 -to IOB[8]
+set_location_assignment PIN_59 -to IOB[9]
+set_location_assignment PIN_65 -to IOB[10]
+set_location_assignment PIN_64 -to IOB[11]
+set_location_assignment PIN_67 -to IOB[12]
+set_location_assignment PIN_66 -to IOB[13]
+set_location_assignment PIN_69 -to IOB[14]
+set_location_assignment PIN_68 -to IOB[15]
+set_location_assignment PIN_72 -to IOB[16]
+set_location_assignment PIN_71 -to IOB[17]
+
+set_location_assignment PIN_144 -to IOC[0]
+set_location_assignment PIN_143 -to IOC[1]
+set_location_assignment PIN_142 -to IOC[2]
+set_location_assignment PIN_141 -to IOC[3]
+set_location_assignment PIN_137 -to IOC[4]
+set_location_assignment PIN_136 -to IOC[5]
+set_location_assignment PIN_133 -to IOC[6]
+set_location_assignment PIN_132 -to IOC[7]
+set_location_assignment PIN_125 -to IOC[8]
+set_location_assignment PIN_121 -to IOC[9]
+set_location_assignment PIN_120 -to IOC[10]
+set_location_assignment PIN_119 -to IOC[11]
+set_location_assignment PIN_115 -to IOC[12]
+set_location_assignment PIN_114 -to IOC[13]
+set_location_assignment PIN_113 -to IOC[14]
+set_location_assignment PIN_112 -to IOC[15]
+set_location_assignment PIN_111 -to IOC[16]
+set_location_assignment PIN_110 -to IOC[17]
+\end{verbatim} }
+
+\newpage
+
+
+\section{程序固化到配置闪存}
+
+这节我们介绍如何把程序固化到 EPCS16（配置闪存芯片），这样就能永久保留 FPGA 程序。
+因为 \boardname 的烧写电路只支持 JTAG 方式，不支持 AS 方式。所以只能用jlc文件来烧录配置闪存芯片。
+
+我们首先需要将sof文件转换为jic文件，如图\ref{gen_jic}。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=.98\textwidth]{gen_jic.png}
+  \caption{转换sof文件到jic 文件的步骤} \label{gen_jic}
+\end{figure}
+
+第一步：打开一个项目，确保\textbf{[项目目录]/output\_files}文件夹下已经有一个编译好的sof文件（若没有则需要编译工程）。
+在工具栏中打开File-\(>\)Convert Programming Files，弹出一个窗口。
+
+第二步：指定文件类型、文件名和flash芯片类型。
+选择Programming file type 为.jic；
+Configuration device为EPCS16 （这是 \boardname 上的配置闪存的型号）；
+最后指定File name为“output\_files/[项目名称].jic”。
+实际上jic文件名可以随便起，但笔者建议它与项目同名，并应该存放在项目目录下的output\_files文件夹下，与sof文件存放在一起。
+
+第三步：选择FPGA型号。点击下方Flash Loader，再点击右边Add Device，
+在弹出的框里的左侧选择Cyclone IV E，再在右侧选择EP4CE22（这是 \boardname 上的FPGA型号），
+然后点OK，完成FPGA型号选择
+
+第四步：选择待转换的sof文件。点击下方的SOF Data，再点击右边的Add File，
+在弹出的框里选择之前编译生成的sof文件（一般sof存放路径是\textbf{[项目目录]/output\_files/[项目名称].sof}）。
+选择好sof后点击Open，最后点击Generate，看到成功提示后，点Close关闭窗口。
+然后可以在\textbf{[项目目录]/output\_files/}中找到jic文件。
+
+
+
+
+
+有了jic文件，我们可以向配置闪存中烧录它，如图\ref{epcswrite}。
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=.98\textwidth]{epcswrite.png}
+  \caption{烧录jic文件的步骤} \label{epcswrite}
+\end{figure}
+
+第一步：首先连接开发板到电脑，在Quartus软件上方点击Program\includegraphics{program.png}，
+在打开的烧录选项里，正确地选择USB-Blaster。
+
+第二步：删除之前的sof烧录选项（如果有的话），点选sof文件并点击delete。
+
+第三步：添加jic文件。与添加sof的方法一样，点击Add File...，选择之前生成的.jic 文件，点击Open。
+
+第四步：烧录。在右侧勾选上Program/Configure，然后点击Start，右上角进度条开始运行。
+烧录jic大概需要15秒时间（比烧录sof慢得多）。完成后会有成功提示，
+此时你必须\textbf{重新插拔开发板}，它才会运行烧录的jic程序。
+
+
+
+\end{document}
