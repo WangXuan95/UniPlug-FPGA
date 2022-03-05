@@ -3,9 +3,9 @@ UniPlug-FPGA（EP4CE6版本）
 
 体积小、低成本、易用、扩展性强的 FPGA 核心板
 
-![成品照片](https://github.com/WangXuan95/UniPlug-FPGA/blob/main/EP4CE6/用户手册/images/board.png)
+![成品照片](../EP4CE6/用户手册/images/board.png)
 
-![系统框图](https://github.com/WangXuan95/UniPlug-FPGA/blob/main/EP4CE6/用户手册/images/diagram.png)
+![系统框图](../EP4CE6/用户手册/images/diagram.png)
 
 
 
