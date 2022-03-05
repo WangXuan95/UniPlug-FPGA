@@ -3,12 +3,12 @@ UniPlug-FPGA
 
 体积小、低成本、易用、扩展性强的 FPGA 核心板，包含2个版本：
 
-* EP4CE6 版本（小型）
-* EP4CE22 版本（大型）
+* EP4CE6 版本（资源较少）
+* EP4CE22 版本（资源较多）
 
-![成品照片](https://github.com/WangXuan95/UniPlug-FPGA/blob/main/EP4CE22/用户手册/images/board.png)
+![成品照片](./EP4CE22/用户手册/images/board.png)
 
-![系统框图](https://github.com/WangXuan95/UniPlug-FPGA/blob/main/EP4CE22/用户手册/images/diagram.png)
+![系统框图](./EP4CE22/用户手册/images/diagram.png)
 
 
 
