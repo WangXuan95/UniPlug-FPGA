@@ -116,13 +116,21 @@ PIC18F14K50 芯片是一个单片机，需要给它烧写一个固件，来把�
 
 
 4. 进行如下操作：
+
     4.1. 解压本文件夹下的 USB-Blaster7.zip
+
     4.2. 用 MPLAB 打开项目文件 Blaster.mcp
+
     4.3. 上方 -> Project -> Build Configuration -> Release  (若默认为 Debug 则需要改成 Release)
+
     4.4. 上方 -> Project -> Build All
+
     4.5. 电脑通过 USB 连接 PICKit3 下载器，并给 PIC8F14K50 上电
+
     4.6. 上方 -> Programmer -> Select Programmer -> PICKit 3 
+
     4.7. 上方 -> Programmer -> Program
+
     4.8. 上方 -> Programmer -> Verify ，验证烧写是否成功
 
 
